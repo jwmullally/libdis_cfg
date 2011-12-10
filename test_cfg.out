@@ -1,0 +1,305 @@
+Disassembly of 'sample':
+
+ Inst#   Offset   Len  Instruction
+     0 :      0 - [ 2] xor	%ebp, %ebp
+     1 :      2 - [ 1] pop	%esi
+     2 :      3 - [ 2] mov	%esp, %ecx
+     3 :      5 - [ 3] and	$0xF0, %esp
+     4 :      8 - [ 1] push	%eax
+     5 :      9 - [ 1] push	%esp
+     6 :      a - [ 1] push	%edx
+     7 :      b - [ 5] push	$0x08048430
+     8 :     10 - [ 5] push	$0x08048440
+     9 :     15 - [ 1] push	%ecx
+    10 :     16 - [ 1] push	%esi
+    11 :     17 - [ 5] push	$0x080483D7
+    12 :     1c - [ 5] lcall	0x080482E8
+    13 :     21 - [ 1] hlt	
+    14 :     22 - [ 1] nop	
+    15 :     23 - [ 1] nop	
+    16 :     24 - [ 1] nop	
+    17 :     25 - [ 1] nop	
+    18 :     26 - [ 1] nop	
+    19 :     27 - [ 1] nop	
+    20 :     28 - [ 1] nop	
+    21 :     29 - [ 1] nop	
+    22 :     2a - [ 1] nop	
+    23 :     2b - [ 1] nop	
+    24 :     2c - [ 1] nop	
+    25 :     2d - [ 1] nop	
+    26 :     2e - [ 1] nop	
+    27 :     2f - [ 1] nop	
+    28 :     30 - [ 1] push	%ebp
+    29 :     31 - [ 2] mov	%esp, %ebp
+    30 :     33 - [ 1] push	%ebx
+    31 :     34 - [ 3] sub	$0x04, %esp
+    32 :     37 - [ 7] cmpb	$0x00, 0x804A010
+    33 :     3e - [ 2] jnz	0x0804837F
+    34 :     40 - [ 5] movl	0x0804A014, %eax
+    35 :     45 - [ 5] mov	$0x08049F18, %ebx
+    36 :     4a - [ 6] sub	$0x08049F14, %ebx
+    37 :     50 - [ 3] sar	$0x02, %ebx
+    38 :     53 - [ 3] sub	$0x01, %ebx
+    39 :     56 - [ 2] cmp	%ebx, %eax
+    40 :     58 - [ 2] jnc	0x08048378
+    41 :     5a - [ 6] leal	(%esi), %esi
+    42 :     60 - [ 3] add	$0x01, %eax
+    43 :     63 - [ 5] movl	%eax, 0x0804A014
+    44 :     68 - [ 7] lcall	*0x8049F14(,%eax,4)
+    45 :     6f - [ 5] movl	0x0804A014, %eax
+    46 :     74 - [ 2] cmp	%ebx, %eax
+    47 :     76 - [ 2] jc	0x08048360
+    48 :     78 - [ 7] movb	$0x01, 0x804A010
+    49 :     7f - [ 3] add	$0x04, %esp
+    50 :     82 - [ 1] pop	%ebx
+    51 :     83 - [ 1] pop	%ebp
+    52 :     84 - [ 1] ret	
+    53 :     85 - [ 4] leal	(%esi), %esi
+    54 :     89 - [ 7] leal	(%edi), %edi
+    55 :     90 - [ 1] push	%ebp
+    56 :     91 - [ 2] mov	%esp, %ebp
+    57 :     93 - [ 3] sub	$0x18, %esp
+    58 :     96 - [ 5] movl	0x08049F1C, %eax
+    59 :     9b - [ 2] test	%eax, %eax
+    60 :     9d - [ 2] jz	0x080483B1
+    61 :     9f - [ 5] mov	$0x00000000, %eax
+    62 :     a4 - [ 2] test	%eax, %eax
+    63 :     a6 - [ 2] jz	0x080483B1
+    64 :     a8 - [ 7] movl	$0x08049F1C, (%esp)
+    65 :     af - [ 2] lcall	%eax
+    66 :     b1 - [ 1] leave	
+    67 :     b2 - [ 1] ret	
+    68 :     b3 - [ 1] nop	
+    69 :     b4 - [ 1] push	%ebp
+    70 :     b5 - [ 2] mov	%esp, %ebp
+    71 :     b7 - [ 3] sub	$0x10, %esp
+    72 :     ba - [ 7] movl	$0x0000DEAD, -0x4(%ebp)
+    73 :     c1 - [ 3] movl	0x8(%ebp), %edx
+    74 :     c4 - [ 2] mov	%edx, %eax
+    75 :     c6 - [ 2] add	%eax, %eax
+    76 :     c8 - [ 2] add	%edx, %eax
+    77 :     ca - [ 5] add	$0x0000BEEF, %eax
+    78 :     cf - [ 3] addl	%eax, -0x4(%ebp)
+    79 :     d2 - [ 3] movl	-0x4(%ebp), %eax
+    80 :     d5 - [ 1] leave	
+    81 :     d6 - [ 1] ret	
+    82 :     d7 - [ 1] push	%ebp
+    83 :     d8 - [ 2] mov	%esp, %ebp
+    84 :     da - [ 1] push	%ebx
+    85 :     db - [ 3] sub	$0x34, %esp
+    86 :     de - [ 7] movl	$0x00000000, -0x8(%ebp)
+    87 :     e5 - [ 2] ljmp	0x08048413
+    88 :     e7 - [ 3] movl	-0x8(%ebp), %ebx
+    89 :     ea - [ 3] movl	-0x8(%ebp), %eax
+    90 :     ed - [ 3] movl	%eax, (%esp)
+    91 :     f0 - [ 5] lcall	0x080483B4
+    92 :     f5 - [ 4] movl	%eax, -0x30(%ebp,%ebx,4)
+    93 :     f9 - [ 3] movl	-0x8(%ebp), %eax
+    94 :     fc - [ 4] movl	-0x30(%ebp,%eax,4), %eax
+    95 :    100 - [ 2] test	%eax, %eax
+    96 :    102 - [ 2] jnz	0x0804840F
+    97 :    104 - [ 3] movl	-0x8(%ebp), %eax
+    98 :    107 - [ 8] movl	$0xBAADF00D, -0x30(%ebp,%eax,4)
+    99 :    10f - [ 4] addl	$0x01, -0x8(%ebp)
+   100 :    113 - [ 4] cmpl	$0x09, -0x8(%ebp)
+   101 :    117 - [ 2] jle	0x080483E7
+   102 :    119 - [ 5] mov	$0x00000000, %eax
+   103 :    11e - [ 3] add	$0x34, %esp
+   104 :    121 - [ 1] pop	%ebx
+   105 :    122 - [ 1] pop	%ebp
+   106 :    123 - [ 1] ret	
+   107 :    124 - [ 1] nop	
+   108 :    125 - [ 1] nop	
+   109 :    126 - [ 1] nop	
+   110 :    127 - [ 1] nop	
+   111 :    128 - [ 1] nop	
+   112 :    129 - [ 1] nop	
+   113 :    12a - [ 1] nop	
+   114 :    12b - [ 1] nop	
+   115 :    12c - [ 1] nop	
+   116 :    12d - [ 1] nop	
+   117 :    12e - [ 1] nop	
+   118 :    12f - [ 1] nop	
+   119 :    130 - [ 1] push	%ebp
+   120 :    131 - [ 2] mov	%esp, %ebp
+   121 :    133 - [ 1] pop	%ebp
+   122 :    134 - [ 1] ret	
+   123 :    135 - [ 4] leal	(%esi), %esi
+   124 :    139 - [ 7] leal	(%edi), %edi
+   125 :    140 - [ 1] push	%ebp
+   126 :    141 - [ 2] mov	%esp, %ebp
+   127 :    143 - [ 1] push	%edi
+   128 :    144 - [ 1] push	%esi
+   129 :    145 - [ 1] push	%ebx
+   130 :    146 - [ 5] lcall	0x0804849A
+   131 :    14b - [ 6] add	$0x00001BA9, %ebx
+   132 :    151 - [ 3] sub	$0x1C, %esp
+   133 :    154 - [ 5] lcall	0x08048298
+   134 :    159 - [ 6] leal	-0xE8(%ebx), %edi
+   135 :    15f - [ 6] leal	-0xE8(%ebx), %eax
+   136 :    165 - [ 2] sub	%eax, %edi
+   137 :    167 - [ 3] sar	$0x02, %edi
+   138 :    16a - [ 2] test	%edi, %edi
+   139 :    16c - [ 2] jz	0x08048492
+   140 :    16e - [ 2] xor	%esi, %esi
+   141 :    170 - [ 3] movl	0x10(%ebp), %eax
+   142 :    173 - [ 4] movl	%eax, 0x8(%esp)
+   143 :    177 - [ 3] movl	0xC(%ebp), %eax
+   144 :    17a - [ 4] movl	%eax, 0x4(%esp)
+   145 :    17e - [ 3] movl	0x8(%ebp), %eax
+   146 :    181 - [ 3] movl	%eax, (%esp)
+   147 :    184 - [ 7] lcall	*-0xE8(%ebx,%esi,4)
+   148 :    18b - [ 3] add	$0x01, %esi
+   149 :    18e - [ 2] cmp	%edi, %esi
+   150 :    190 - [ 2] jc	0x08048470
+   151 :    192 - [ 3] add	$0x1C, %esp
+   152 :    195 - [ 1] pop	%ebx
+   153 :    196 - [ 1] pop	%esi
+   154 :    197 - [ 1] pop	%edi
+   155 :    198 - [ 1] pop	%ebp
+   156 :    199 - [ 1] ret	
+   157 :    19a - [ 3] movl	(%esp), %ebx
+   158 :    19d - [ 1] ret	
+   159 :    19e - [ 1] nop	
+   160 :    19f - [ 1] nop	
+   161 :    1a0 - [ 1] push	%ebp
+   162 :    1a1 - [ 2] mov	%esp, %ebp
+   163 :    1a3 - [ 1] push	%ebx
+   164 :    1a4 - [ 3] sub	$0x04, %esp
+   165 :    1a7 - [ 5] movl	0x08049F0C, %eax
+   166 :    1ac - [ 3] cmp	$0xFF, %eax
+   167 :    1af - [ 2] jz	0x080484C4
+   168 :    1b1 - [ 5] mov	$0x08049F0C, %ebx
+   169 :    1b6 - [ 2] nop	
+   170 :    1b8 - [ 3] sub	$0x04, %ebx
+   171 :    1bb - [ 2] lcall	%eax
+   172 :    1bd - [ 2] movl	(%ebx), %eax
+   173 :    1bf - [ 3] cmp	$0xFF, %eax
+   174 :    1c2 - [ 2] jnz	0x080484B8
+   175 :    1c4 - [ 3] add	$0x04, %esp
+   176 :    1c7 - [ 1] pop	%ebx
+   177 :    1c8 - [ 1] pop	%ebp
+   178 :    1c9 - [ 1] ret	
+   179 :    1ca - [ 1] nop	
+   180 :    1cb - [ 1] nop	
+
+
+node: 0x88c1098, 0 -> 33
+  parents:
+  children: 0x88d8870, 0x88d8810,
+node: 0x88d8810, 34 -> 40
+  parents: 0x88c1098,
+  children: 0x88d8858, 0x88d8828,
+node: 0x88d8828, 41 -> 41
+  parents: 0x88d8810,
+  children: 0x88d8840,
+node: 0x88d8840, 42 -> 47
+  parents: 0x88d8840, 0x88d8828,
+  children: 0x88d8840, 0x88d8858,
+node: 0x88d8858, 48 -> 48
+  parents: 0x88d8810, 0x88d8840,
+  children: 0x88d8870,
+node: 0x88d8870, 49 -> 52
+  parents: 0x88c1098, 0x88d8858,
+  children:
+node: 0x88d8888, 53 -> 60
+  parents:
+  children: 0x88d88d0, 0x88d88a0,
+node: 0x88d88a0, 61 -> 63
+  parents: 0x88d8888,
+  children: 0x88d88d0, 0x88d88b8,
+node: 0x88d88b8, 64 -> 65
+  parents: 0x88d88a0,
+  children: 0x88d88d0,
+node: 0x88d88d0, 66 -> 67
+  parents: 0x88d8888, 0x88d88a0, 0x88d88b8,
+  children:
+node: 0x88d88e8, 68 -> 81
+  parents:
+  children:
+node: 0x88d8900, 82 -> 87
+  parents:
+  children: 0x88d8960,
+node: 0x88d8918, 88 -> 96
+  parents: 0x88d8960,
+  children: 0x88d8948, 0x88d8930,
+node: 0x88d8930, 97 -> 98
+  parents: 0x88d8918,
+  children: 0x88d8948,
+node: 0x88d8948, 99 -> 99
+  parents: 0x88d8918, 0x88d8930,
+  children: 0x88d8960,
+node: 0x88d8960, 100 -> 101
+  parents: 0x88d8900, 0x88d8948,
+  children: 0x88d8918, 0x88d8978,
+node: 0x88d8978, 102 -> 106
+  parents: 0x88d8960,
+  children:
+node: 0x88d8990, 107 -> 122
+  parents:
+  children:
+node: 0x88d89a8, 123 -> 139
+  parents:
+  children: 0x88d89f0, 0x88d89c0,
+node: 0x88d89c0, 140 -> 140
+  parents: 0x88d89a8,
+  children: 0x88d89d8,
+node: 0x88d89d8, 141 -> 150
+  parents: 0x88d89d8, 0x88d89c0,
+  children: 0x88d89d8, 0x88d89f0,
+node: 0x88d89f0, 151 -> 156
+  parents: 0x88d89a8, 0x88d89d8,
+  children:
+node: 0x88d8a08, 157 -> 158
+  parents:
+  children:
+node: 0x88d8a20, 159 -> 167
+  parents:
+  children: 0x88d8a68, 0x88d8a38,
+node: 0x88d8a38, 168 -> 169
+  parents: 0x88d8a20,
+  children: 0x88d8a50,
+node: 0x88d8a50, 170 -> 174
+  parents: 0x88d8a50, 0x88d8a38,
+  children: 0x88d8a50, 0x88d8a68,
+node: 0x88d8a68, 175 -> 178
+  parents: 0x88d8a20, 0x88d8a50,
+  children:
+node: 0x88d8a80, 179 -> 180
+  parents:
+  children:
+
+
+digraph G
+{
+    n0_33 -> n49_52;
+    n0_33 -> n34_40;
+    n34_40 -> n48_48;
+    n34_40 -> n41_41;
+    n41_41 -> n42_47;
+    n42_47 -> n42_47;
+    n42_47 -> n48_48;
+    n48_48 -> n49_52;
+    n53_60 -> n66_67;
+    n53_60 -> n61_63;
+    n61_63 -> n66_67;
+    n61_63 -> n64_65;
+    n64_65 -> n66_67;
+    n82_87 -> n100_101;
+    n88_96 -> n99_99;
+    n88_96 -> n97_98;
+    n97_98 -> n99_99;
+    n99_99 -> n100_101;
+    n100_101 -> n88_96;
+    n100_101 -> n102_106;
+    n123_139 -> n151_156;
+    n123_139 -> n140_140;
+    n140_140 -> n141_150;
+    n141_150 -> n141_150;
+    n141_150 -> n151_156;
+    n159_167 -> n175_178;
+    n159_167 -> n168_169;
+    n168_169 -> n170_174;
+    n170_174 -> n170_174;
+    n170_174 -> n175_178;
+}

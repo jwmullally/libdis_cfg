@@ -1,0 +1,57 @@
+cfg.c
+A Control Flow Graph basic block generator for use with the 
+libdisasm x86 disassembler, written in C.
+
+Joe Mullally 2011, released into the Public Domain.
+
+
+To produce a graph of the control flow basic blocks:
+ - Disassemble the x86 program text into an array of disassembled 
+       instructions with x86_disasm(...).
+ - Pass this array to cfg_make(...).
+ - Use the returned lists to navigate through the graph.
+
+ See test_cfg.c for sample usage, and test_cfg.out, graph.dot and graph.png
+ for what the constructed graph looks like.
+
+
+ cfg_make() returns a linked list of all basic blocks, each of which contains
+ the instruction range the block covers, along with a list of connected 
+ parent and child blocks. A child block is one that program control flow 
+ progresses into from a parent block.
+ A list of the top level nodes (ie nodes with no parents) is also returned.
+
+ x86_disasm() and cfg_make() should be able to decode most of the structure
+ in typical x86 ELF relocatable executables.
+
+ For now the types of branching supported are static relative jumps,
+ Tracking possible indirect jumps through register values is a much
+ harder problem that requires data flow analysis.
+ This code also depends on being supplied a linear scan disassembly 
+ of the x86 instructions. In practice an x86 program can jump to and start 
+ executing at any byte. If there are extra bytes between the instructions 
+ that wouldn't normally be executed this can confuse the linear disassembly 
+ approach here.
+ This shouldn't be a problem with typical compiler generated 
+ ELF .text sections.
+
+
+Porting:
+  It should be easy to convert this to a dissassembler library other 
+  than libdisasm.
+ 
+  To make the CFG, each disassembled instruction needs:
+    - size of instruction in bytes
+    - a way of checking if the instruction is a branch instruction
+    - if it is a branch instruction, a way of getting the branch target
+      offset from the instruction.
+
+ Most of the library specific changes will likely be in:
+    is_branch_inst(), is_deadend_inst(), get_branch_targets()
+
+Future:
+  Add absolute address jumps.
+  Maybe add a call and callee list field to the basic block structure to 
+   track call instructions.
+
+
