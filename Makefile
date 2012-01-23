@@ -1,7 +1,9 @@
-all: 
-	gcc -Wall test_cfg.c cfg.c -o test_cfg -ldisasm -lbfd
-	gcc -Wall sample.c -o sample
+all:
+	gcc -Wall -g test_cfg.c cfg.c -o test_cfg -ldisasm -lbfd
+	gcc -Wall -g sample.c -o sample
 
 test:
 	./test_cfg sample
-	dot -Tps graph.dot -o graph.ps
+	dot -Tpdf graph.simple.dot -o graph.simple.pdf
+	dot -Tpdf graph.dot -o graph.pdf
+	dot -Tpng graph.dot -o graph.png

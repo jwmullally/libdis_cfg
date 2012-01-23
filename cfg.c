@@ -67,15 +67,17 @@
 #include "cfg.h"
 
 
+static void list_append(void *list, void *item);
+static void list_free(void *list);
 
 struct st_int_list {
-    int val;
     struct st_int_list *next;
+    int val;
 };
 
 struct st_branch {
-    int rel_offset;
     struct st_branch *next;
+    int rel_offset;
 };
 
 
@@ -95,18 +97,22 @@ static int is_deadend_inst(x86_insn_t *inst)
     return 0;
 }
 
-static struct st_branch * get_branch_targets(x86_insn_t **insts, int inst_idx)
+static struct st_branch * get_branch_targets(x86_insn_t *inst)
 {
     struct st_branch *branches;
     x86_op_t *op;
+    char disbuf[256];
+    disbuf[255] = '\0';
 
-    assert (insts[inst_idx]->type == insn_jmp || insts[inst_idx]->type == insn_jcc);
+    assert (inst->type == insn_jmp || inst->type == insn_jcc);
 
-    op = x86_get_branch_target(insts[inst_idx]);
+    op = x86_get_branch_target(inst);
 
     if (op->type != op_relative_near && op->type != op_relative_far) {
-        // Leave absolute and other address formats for now.
-        printf("Warning: Instruction [%i] branching type not handled, ignoring...\n", inst_idx);
+        // Leave absolute, indirection, address expressions unsupported for now.
+        printf("Warning: Branching address type not handled, ignoring...\n");
+        x86_format_insn (inst, disbuf, 255, att_syntax);
+        printf("           %08x [%2i] %s\\l", inst->addr, inst->size, disbuf);
         return NULL;
     }
 
@@ -118,7 +124,7 @@ static struct st_branch * get_branch_targets(x86_insn_t **insts, int inst_idx)
     } else if (op->type == op_relative_far) {
         branches->rel_offset = op->data.relative_far;
     }
-    if (insts[inst_idx]->type == insn_jcc) {
+    if (inst->type == insn_jcc) {
         branches->next = malloc(sizeof(struct st_branch));
         branches->next->rel_offset = 0; // Point to next instruction
         branches->next->next = NULL;
@@ -135,12 +141,10 @@ void cfg_make(x86_insn_t **insts, int insts_len, struct cfg_node_list **nodelist
 {
     int inst_idx, inst_target_idx, end_block, byte_idx, inst_byte_idx, 
         target_offset, text_len, *map_offset_to_idx;
-    struct st_int_list **parents, **children, **childi, **parenti, *childp, 
-                       *parentp, *tempp;
+    struct st_int_list **parents, **children, *parenti, *childi;
     struct st_branch *branches, *branch, *branchtemp;
     struct cfg_node_list *top_nodes, *topnode_ll, *nodelist, *node_ll, 
-                         **top_nodes_prevptr, **nodelist_prevptr, **parentb, 
-                         **childb;
+                         *parentb, *childb;
     struct cfg_node *cfgnode, **idx_to_block;
 
 
@@ -170,17 +174,19 @@ void cfg_make(x86_insn_t **insts, int insts_len, struct cfg_node_list **nodelist
     }
 
     // Mark start and end of basic blocks
+    // Set parent marker when another block jumps here.
+    // Set children when this instruction branches to 
     byte_idx = 0;
     for (inst_idx = 0; inst_idx < insts_len; inst_idx++) {
         if (is_branch_inst(insts[inst_idx])) {
 
-            branches = get_branch_targets(insts, inst_idx);
-            childi = &children[inst_idx];
+            branches = get_branch_targets(insts[inst_idx]);
             branch = branches;
             while (branch != NULL) {
                 target_offset = byte_idx + insts[inst_idx]->size + branch->rel_offset;
                 if (target_offset < 0 || target_offset >= text_len) {
-                    printf("Warning: Instruction [%i] control flow jump %i outside of text region, ignoring...\n", inst_idx, target_offset);
+                    printf("Warning: Instruction [%i] control flow jump %i outside of"
+                           " text region, ignoring...\n", inst_idx, target_offset);
                     branchtemp = branch;
                     branch = branch->next;
                     free(branchtemp);
@@ -190,19 +196,15 @@ void cfg_make(x86_insn_t **insts, int insts_len, struct cfg_node_list **nodelist
                 
                 // Make this instruction/block the parent of the target block
                 // The target instruction is the beginning of a basic block.
-                parenti = &parents[inst_target_idx];
-                while (*parenti != NULL)
-                    parenti = &(*parenti)->next;
-                *parenti = malloc(sizeof(struct st_int_list));
-                (*parenti)->val = inst_idx;
-                (*parenti)->next = NULL;
+                parenti = malloc(sizeof(struct st_int_list));
+                parenti->val = inst_idx;
+                list_append(&parents[inst_target_idx], parenti);
 
                 // Make the target block the child of this instruction/block
                 // This branch instruction is the end of a basic block.
-                *childi = malloc(sizeof(struct st_int_list));
-                (*childi)->val = inst_target_idx;
-                (*childi)->next = NULL;
-                childi = &(*childi)->next;
+                childi = malloc(sizeof(struct st_int_list));
+                childi->val = inst_target_idx;
+                list_append(&children[inst_idx], childi);
 
                 branchtemp = branch;
                 branch = branch->next;
@@ -215,13 +217,10 @@ void cfg_make(x86_insn_t **insts, int insts_len, struct cfg_node_list **nodelist
     // Construct the basic blocks, using the regions between the
     // parents and children markers as the start and end of each block
     nodelist = NULL;
-    nodelist_prevptr = &nodelist;
     for (inst_idx = 0; inst_idx < insts_len; inst_idx++) {
 
         node_ll = malloc(sizeof(struct cfg_node_list));
-        *nodelist_prevptr = node_ll;
-        nodelist_prevptr = &node_ll->next;
-        node_ll->next = NULL;
+        list_append(&nodelist, node_ll);
 
         cfgnode = malloc(sizeof(struct cfg_node));
         node_ll->node = cfgnode;
@@ -241,19 +240,13 @@ void cfg_make(x86_insn_t **insts, int insts_len, struct cfg_node_list **nodelist
                 // first. It looks like another block jumps into the middle of
                 // this one. Split this block and make this block the parent 
                 // of the next block which will contain the next instruction.
-                parenti = &parents[inst_idx];
-                while (*parenti != NULL)
-                    parenti = &(*parenti)->next;
-                *parenti = malloc(sizeof(struct st_int_list));
-                (*parenti)->val = inst_idx - 1;
-                (*parenti)->next = NULL;
+                parenti = malloc(sizeof(struct st_int_list));
+                parenti->val = inst_idx - 1;
+                list_append(&parents[inst_idx], parenti);
 
-                childi = &children[inst_idx-1];
-                while (*childi != NULL)
-                    childi = &(*childi)->next;
-                *childi = malloc(sizeof(struct st_int_list));
-                (*childi)->val = inst_idx;
-                (*childi)->next = NULL;
+                childi = malloc(sizeof(struct st_int_list));
+                childi->val = inst_idx;
+                list_append(&children[inst_idx-1], childi);
 
                 inst_idx--;
                 end_block = 1;
@@ -277,39 +270,35 @@ void cfg_make(x86_insn_t **insts, int insts_len, struct cfg_node_list **nodelist
         }
     }
 
-    // Iterate through all the basic blocks, and fill in the parent and children of each block
+
+    // Iterate through all the basic blocks, and fill in the pointers to
+    // the parent and children blocks.
     top_nodes = NULL;
-    top_nodes_prevptr = &top_nodes;
     node_ll = nodelist;
     while (node_ll != NULL) {
         cfgnode = node_ll->node;
 
+        // If this block has no parents, it is a top level node.
         if (parents[cfgnode->start_inst] == NULL) {
             topnode_ll = malloc(sizeof(struct cfg_node_list));
-            *top_nodes_prevptr = topnode_ll;
-            topnode_ll->next = NULL;
-            top_nodes_prevptr = &topnode_ll->next;
             topnode_ll->node = cfgnode;
+            list_append(&top_nodes, topnode_ll);
         } else {
-            parentb = &cfgnode->parents;
-            parentp = parents[cfgnode->start_inst];
-            while (parentp != NULL) {
-                *parentb = malloc(sizeof(struct cfg_node_list));
-                (*parentb)->node = idx_to_block[parentp->val];
-                (*parentb)->next = NULL;
-                parentb = &(*parentb)->next;
-                parentp = parentp->next;
+            parenti = parents[cfgnode->start_inst];
+            while (parenti != NULL) {
+                parentb = malloc(sizeof(struct cfg_node_list));
+                parentb->node = idx_to_block[parenti->val];
+                list_append(&cfgnode->parents, parentb);
+                parenti = parenti->next;
             }
         }
 
-        childb = &cfgnode->children;
-        childp = children[cfgnode->start_inst + cfgnode->block_len - 1];
-        while (childp != NULL) {
-            *childb = malloc(sizeof(struct cfg_node_list));
-            (*childb)->node = idx_to_block[childp->val];
-            (*childb)->next = NULL;
-            childb = &(*childb)->next;
-            childp = childp->next;
+        childi = children[cfgnode->start_inst + cfgnode->block_len - 1];
+        while (childi != NULL) {
+            childb = malloc(sizeof(struct cfg_node_list));
+            childb->node = idx_to_block[childi->val];
+            list_append(&cfgnode->children, childb);
+            childi = childi->next;
         }
 
         node_ll = node_ll->next;
@@ -317,18 +306,8 @@ void cfg_make(x86_insn_t **insts, int insts_len, struct cfg_node_list **nodelist
 
     // Free working memory
     for (inst_idx = 0; inst_idx < insts_len; inst_idx++) {
-        parentp = parents[inst_idx];
-        while (parentp != NULL) {
-            tempp = parentp->next;
-            free(parentp);
-            parentp = tempp;
-        }
-        childp = children[inst_idx];
-        while (childp != NULL) {
-            tempp = childp->next;
-            free(childp);
-            childp = tempp;
-        }
+        list_free(parents[inst_idx]);
+        list_free(children[inst_idx]);
     }
     free(parents);
     free(children);
@@ -341,26 +320,26 @@ void cfg_make(x86_insn_t **insts, int insts_len, struct cfg_node_list **nodelist
 }
 
 // Free a CFG node list returned from cfg_make()
-void cfg_free(struct cfg_node_list *node_list)
+void cfg_free_list(struct cfg_node_list *node_list)
 {
-    struct cfg_node_list *node_ll, *node_lll, *node_temp;
+    list_free(node_list);
+    return;
+}
+
+// Free a CFG node list and blocks returned from cfg_make(). 
+void cfg_free_list_and_blocks(struct cfg_node_list *node_list)
+{
+    struct cfg_node_list *node_ll, *node_ll_next;
     struct cfg_node *cfgnode;
     node_ll = node_list;
     while (node_ll != NULL) {
         cfgnode = node_ll->node;
-        node_lll = cfgnode->parents;
-        while (node_lll != NULL) {
-            node_temp = node_lll;
-            node_lll = node_lll->next;
-            free(node_temp);
-        }
-        node_lll = cfgnode->children;
-        while (node_lll != NULL) {
-            node_temp = node_lll;
-            node_lll = node_lll->next;
-            free(node_temp);
-        }
+        list_free(cfgnode->parents);
+        list_free(cfgnode->children);
         free(cfgnode);
+        node_ll_next = node_ll->next;
+        free(node_ll);
+        node_ll = node_ll_next;
     }
     return;
 }
@@ -450,4 +429,42 @@ void cfg_fprint_graphviz_insts(FILE *outfile, struct cfg_node_list *node_list, x
     fprintf(outfile, "}\n");
     return;
 }
+
+
+//////// Utility functions ////////
+// Some list helper functions.
+
+// Append an item to the end of a linked list.
+// Pass a pointer to the variable holding the first node (head) of the list.
+// e.g. list_append(&head, item);
+// Needs the first entry in the list item struct to be the 'next' pointer.
+// (Replacing this with a tail caching version:
+//       list_append(&list, item, (void *) &tailcache) 
+//  only gives a tiny speedup for our small uses here).
+static void list_append(void *list, void *item)
+{
+    void **next = (void **) list;
+    assert (list != NULL);
+    while (*next != NULL)
+        next = *next;
+    *next = item;
+    *(void **)item = NULL;
+    return;
+}
+
+// Free a list: Call free() on each item in a linked list.
+// Needs the first entry in list item struct to be the 'next' pointer.
+static void list_free(void *list)
+{
+    void *next, *cur = list;
+    while (cur != NULL) {
+        next = *(void **) cur;
+        free(cur);
+        cur = next;
+    }
+    return;
+}
+
+//////// END Utility functions ////////
+
 

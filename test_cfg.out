@@ -1,3 +1,4 @@
+./test_cfg sample
 Disassembly of 'sample':
 
  Inst#   Offset   Len  Instruction
@@ -184,91 +185,95 @@ Disassembly of 'sample':
    180 :    1cb - [ 1] nop	
 
 
-node: 0x88c1098, 0 -> 33
+Control Flow Graph in memory:
+
+node: 0x9e88098, 0 -> 33
   parents:
-  children: 0x88d8870, 0x88d8810,
-node: 0x88d8810, 34 -> 40
-  parents: 0x88c1098,
-  children: 0x88d8858, 0x88d8828,
-node: 0x88d8828, 41 -> 41
-  parents: 0x88d8810,
-  children: 0x88d8840,
-node: 0x88d8840, 42 -> 47
-  parents: 0x88d8840, 0x88d8828,
-  children: 0x88d8840, 0x88d8858,
-node: 0x88d8858, 48 -> 48
-  parents: 0x88d8810, 0x88d8840,
-  children: 0x88d8870,
-node: 0x88d8870, 49 -> 52
-  parents: 0x88c1098, 0x88d8858,
+  children: 0x9ea0a98, 0x9ea0a38,
+node: 0x9ea0a38, 34 -> 40
+  parents: 0x9e88098,
+  children: 0x9ea0a80, 0x9ea0a50,
+node: 0x9ea0a50, 41 -> 41
+  parents: 0x9ea0a38,
+  children: 0x9ea0a68,
+node: 0x9ea0a68, 42 -> 47
+  parents: 0x9ea0a68, 0x9ea0a50,
+  children: 0x9ea0a68, 0x9ea0a80,
+node: 0x9ea0a80, 48 -> 48
+  parents: 0x9ea0a38, 0x9ea0a68,
+  children: 0x9ea0a98,
+node: 0x9ea0a98, 49 -> 52
+  parents: 0x9e88098, 0x9ea0a80,
   children:
-node: 0x88d8888, 53 -> 60
+node: 0x9ea0ab0, 53 -> 60
   parents:
-  children: 0x88d88d0, 0x88d88a0,
-node: 0x88d88a0, 61 -> 63
-  parents: 0x88d8888,
-  children: 0x88d88d0, 0x88d88b8,
-node: 0x88d88b8, 64 -> 65
-  parents: 0x88d88a0,
-  children: 0x88d88d0,
-node: 0x88d88d0, 66 -> 67
-  parents: 0x88d8888, 0x88d88a0, 0x88d88b8,
+  children: 0x9ea0af8, 0x9ea0ac8,
+node: 0x9ea0ac8, 61 -> 63
+  parents: 0x9ea0ab0,
+  children: 0x9ea0af8, 0x9ea0ae0,
+node: 0x9ea0ae0, 64 -> 65
+  parents: 0x9ea0ac8,
+  children: 0x9ea0af8,
+node: 0x9ea0af8, 66 -> 67
+  parents: 0x9ea0ab0, 0x9ea0ac8, 0x9ea0ae0,
   children:
-node: 0x88d88e8, 68 -> 81
-  parents:
-  children:
-node: 0x88d8900, 82 -> 87
-  parents:
-  children: 0x88d8960,
-node: 0x88d8918, 88 -> 96
-  parents: 0x88d8960,
-  children: 0x88d8948, 0x88d8930,
-node: 0x88d8930, 97 -> 98
-  parents: 0x88d8918,
-  children: 0x88d8948,
-node: 0x88d8948, 99 -> 99
-  parents: 0x88d8918, 0x88d8930,
-  children: 0x88d8960,
-node: 0x88d8960, 100 -> 101
-  parents: 0x88d8900, 0x88d8948,
-  children: 0x88d8918, 0x88d8978,
-node: 0x88d8978, 102 -> 106
-  parents: 0x88d8960,
-  children:
-node: 0x88d8990, 107 -> 122
+node: 0x9ea0b10, 68 -> 81
   parents:
   children:
-node: 0x88d89a8, 123 -> 139
+node: 0x9ea0b28, 82 -> 87
   parents:
-  children: 0x88d89f0, 0x88d89c0,
-node: 0x88d89c0, 140 -> 140
-  parents: 0x88d89a8,
-  children: 0x88d89d8,
-node: 0x88d89d8, 141 -> 150
-  parents: 0x88d89d8, 0x88d89c0,
-  children: 0x88d89d8, 0x88d89f0,
-node: 0x88d89f0, 151 -> 156
-  parents: 0x88d89a8, 0x88d89d8,
+  children: 0x9ea0b88,
+node: 0x9ea0b40, 88 -> 96
+  parents: 0x9ea0b88,
+  children: 0x9ea0b70, 0x9ea0b58,
+node: 0x9ea0b58, 97 -> 98
+  parents: 0x9ea0b40,
+  children: 0x9ea0b70,
+node: 0x9ea0b70, 99 -> 99
+  parents: 0x9ea0b40, 0x9ea0b58,
+  children: 0x9ea0b88,
+node: 0x9ea0b88, 100 -> 101
+  parents: 0x9ea0b28, 0x9ea0b70,
+  children: 0x9ea0b40, 0x9ea0ba0,
+node: 0x9ea0ba0, 102 -> 106
+  parents: 0x9ea0b88,
   children:
-node: 0x88d8a08, 157 -> 158
+node: 0x9ea0bb8, 107 -> 122
   parents:
   children:
-node: 0x88d8a20, 159 -> 167
+node: 0x9ea0bd0, 123 -> 139
   parents:
-  children: 0x88d8a68, 0x88d8a38,
-node: 0x88d8a38, 168 -> 169
-  parents: 0x88d8a20,
-  children: 0x88d8a50,
-node: 0x88d8a50, 170 -> 174
-  parents: 0x88d8a50, 0x88d8a38,
-  children: 0x88d8a50, 0x88d8a68,
-node: 0x88d8a68, 175 -> 178
-  parents: 0x88d8a20, 0x88d8a50,
+  children: 0x9ea0c18, 0x9ea0be8,
+node: 0x9ea0be8, 140 -> 140
+  parents: 0x9ea0bd0,
+  children: 0x9ea0c00,
+node: 0x9ea0c00, 141 -> 150
+  parents: 0x9ea0c00, 0x9ea0be8,
+  children: 0x9ea0c00, 0x9ea0c18,
+node: 0x9ea0c18, 151 -> 156
+  parents: 0x9ea0bd0, 0x9ea0c00,
   children:
-node: 0x88d8a80, 179 -> 180
+node: 0x9ea0c30, 157 -> 158
+  parents:
+  children:
+node: 0x9ea0c48, 159 -> 167
+  parents:
+  children: 0x9ea0c90, 0x9ea0c60,
+node: 0x9ea0c60, 168 -> 169
+  parents: 0x9ea0c48,
+  children: 0x9ea0c78,
+node: 0x9ea0c78, 170 -> 174
+  parents: 0x9ea0c78, 0x9ea0c60,
+  children: 0x9ea0c78, 0x9ea0c90,
+node: 0x9ea0c90, 175 -> 178
+  parents: 0x9ea0c48, 0x9ea0c78,
+  children:
+node: 0x9ea0ca8, 179 -> 180
   parents:
   children:
 
+
+DOT graph for CFG:
 
 digraph G
 {
@@ -303,3 +308,10 @@ digraph G
     n170_174 -> n170_174;
     n170_174 -> n175_178;
 }
+
+Writing CFG to 'graph.simple.dot'...
+Writing CFG to 'graph.dot'...
+
+dot -Tpdf graph.simple.dot -o graph.simple.pdf
+dot -Tpdf graph.dot -o graph.pdf
+dot -Tpng graph.dot -o graph.png

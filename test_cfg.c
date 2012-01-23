@@ -134,16 +134,31 @@ int main(int argc, char *argv[])
     disassemble_text(text, text_len, textaddr, &insts, &insts_len);
     print_instructions(insts, insts_len);
     printf("\n\n");
-
+    
     cfg_make(insts, insts_len, &nodelist, &top_nodes);
 
+    printf("Control Flow Graph in memory:\n\n");
     cfg_print(nodelist);
-    printf("\n");
+
+    printf("\nDOT graph for CFG:\n\n");
     cfg_fprint_graphviz(stdout, nodelist);
 
-    FILE *outfile2 = fopen("graph.dot", "w");
-    cfg_fprint_graphviz_insts(outfile2, nodelist, insts, insts_len);
+    printf("\nWriting CFG to \'graph.simple.dot'...\n");
+    FILE *outfile2 = fopen("graph.simple.dot", "w");
+    if (outfile2 == NULL)
+        error_exit(-1, errno, "Unable to open 'graph.simple.dot' for writing:");
+    cfg_fprint_graphviz(outfile3, nodelist);
     fclose(outfile2);
+
+    printf("Writing CFG to \'graph.dot'...\n\n");
+    FILE *outfile3 = fopen("graph.dot", "w");
+    if (outfile3 == NULL)
+        error_exit(-1, errno, "Unable to open 'graph.simple.dot' for writing:");
+    cfg_fprint_graphviz_insts(outfile2, nodelist, insts, insts_len);
+    fclose(outfile3);
+
+    cfg_free_list(top_nodes);
+    cfg_free_list_and_blocks(nodelist);
 
     return 0;
 }
