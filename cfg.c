@@ -56,12 +56,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdarg.h>
-#include <stdint.h>
 #include <string.h>
 #include <assert.h>
-#include <bfd.h>
-#include <errno.h>
 #include <libdis.h>
 
 #include "cfg.h"

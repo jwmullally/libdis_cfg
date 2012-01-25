@@ -129,14 +129,16 @@ int main(int argc, char *argv[])
         error_exit(-1, 0, "Unable to read .text contents from '%s'", argv[1]);
     textaddr = bfd_get_section_vma(elf_file, text_section);
     
-    // Disassemble the text, make the CFG graph structure and print a graph.
+    // Disassemble the text
     printf("Disassembly of '%s':\n\n", argv[1]);
     disassemble_text(text, text_len, textaddr, &insts, &insts_len);
     print_instructions(insts, insts_len);
     printf("\n\n");
     
+    // Make the Control Flow Graph from the disassembled instructions.
     cfg_make(insts, insts_len, &nodelist, &top_nodes);
 
+    // Print various CFG graphs
     printf("Control Flow Graph in memory:\n\n");
     cfg_print(nodelist);
 
@@ -147,14 +149,14 @@ int main(int argc, char *argv[])
     FILE *outfile2 = fopen("graph.simple.dot", "w");
     if (outfile2 == NULL)
         error_exit(-1, errno, "Unable to open 'graph.simple.dot' for writing:");
-    cfg_fprint_graphviz(outfile3, nodelist);
+    cfg_fprint_graphviz(outfile2, nodelist);
     fclose(outfile2);
 
     printf("Writing CFG to \'graph.dot'...\n\n");
     FILE *outfile3 = fopen("graph.dot", "w");
     if (outfile3 == NULL)
         error_exit(-1, errno, "Unable to open 'graph.simple.dot' for writing:");
-    cfg_fprint_graphviz_insts(outfile2, nodelist, insts, insts_len);
+    cfg_fprint_graphviz_insts(outfile3, nodelist, insts, insts_len);
     fclose(outfile3);
 
     cfg_free_list(top_nodes);
