@@ -138,7 +138,7 @@ void cfg_make(x86_insn_t **insts, int insts_len, struct cfg_node_list **nodelist
     int inst_idx, inst_target_idx, end_block, byte_idx, inst_byte_idx, 
         target_offset, text_len, *map_offset_to_idx;
     struct st_int_list **parents, **children, *parenti, *childi;
-    struct st_branch *branches, *branch, *branchtemp;
+    struct st_branch *branches, *branch;
     struct cfg_node_list *top_nodes, *topnode_ll, *nodelist, *node_ll, 
                          *parentb, *childb;
     struct cfg_node *cfgnode, **idx_to_block;
@@ -177,15 +177,11 @@ void cfg_make(x86_insn_t **insts, int insts_len, struct cfg_node_list **nodelist
         if (is_branch_inst(insts[inst_idx])) {
 
             branches = get_branch_targets(insts[inst_idx]);
-            branch = branches;
-            while (branch != NULL) {
+            for (branch = branches; branch != NULL; branch = branch->next) {
                 target_offset = byte_idx + insts[inst_idx]->size + branch->rel_offset;
                 if (target_offset < 0 || target_offset >= text_len) {
                     printf("Warning: Instruction [%i] control flow jump %i outside of"
                            " text region, ignoring...\n", inst_idx, target_offset);
-                    branchtemp = branch;
-                    branch = branch->next;
-                    free(branchtemp);
                     continue;
                 }
                 inst_target_idx = map_offset_to_idx[target_offset];
@@ -201,11 +197,8 @@ void cfg_make(x86_insn_t **insts, int insts_len, struct cfg_node_list **nodelist
                 childi = malloc(sizeof(struct st_int_list));
                 childi->val = inst_target_idx;
                 list_append(&children[inst_idx], childi);
-
-                branchtemp = branch;
-                branch = branch->next;
-                free(branchtemp);
             }
+            list_free(branches);
         }
         byte_idx += insts[inst_idx]->size;
     }
@@ -431,9 +424,10 @@ void cfg_fprint_graphviz_insts(FILE *outfile, struct cfg_node_list *node_list, x
 // Some list helper functions.
 
 // Append an item to the end of a linked list.
+// Needs the first entry in the list item struct to be the 'next' pointer.
+//
 // Pass a pointer to the variable holding the first node (head) of the list.
 // e.g. list_append(&head, item);
-// Needs the first entry in the list item struct to be the 'next' pointer.
 // (Replacing this with a tail caching version:
 //       list_append(&list, item, (void *) &tailcache) 
 //  only gives a tiny speedup for our small uses here).
